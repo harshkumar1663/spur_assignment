@@ -136,6 +136,24 @@ Use Vercel dev to run both frontend and API together:
 vercel dev
 ```
 
+### Vercel Build Errors with better-sqlite3
+
+If you see native build failures for `better-sqlite3` mentioning C++20, V8 API, or missing prebuilt binaries while Vercel uses Node 24, pin Node to 20.x:
+
+1. Ensure the root `package.json` contains:
+   ```json
+   {
+     "engines": { "node": "20.x" }
+   }
+   ```
+2. Also set the backend `package.json` engines to `"20.x"`.
+3. Redeploy from the repository root:
+   ```bash
+   vercel --prod
+   ```
+
+Why: Vercel may default to Node 24, which triggers a source build of `better-sqlite3` against newer V8 headers requiring C++20. Pinning to Node 20 uses available prebuilt binaries and avoids compilation.
+
 ---
 
 ## Option 4: Deploy with Docker
