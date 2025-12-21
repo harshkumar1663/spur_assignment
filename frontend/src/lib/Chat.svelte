@@ -15,6 +15,7 @@
 	import { onMount, tick } from 'svelte';
 	import Message from './Message.svelte';
 	import ChatInput from './ChatInput.svelte';
+	import { ENDPOINTS } from './api';
 
 	interface ChatMessage {
 		id: string;
@@ -47,7 +48,7 @@
 		if (!sessionId) return;
 
 		try {
-			const response = await fetch('/api/chat/history', {
+			const response = await fetch(ENDPOINTS.chatHistory(), {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ sessionId }),
@@ -68,7 +69,7 @@
 			try {
 				data = await response.json();
 			} catch (parseErr) {
-				throw new Error('Server response was not valid JSON. Please restart the backend (http://localhost:3000).');
+				throw new Error('Server response was not valid JSON. Please restart the backend.');
 			}
 			messages = data.messages;
 			await scrollToBottom();
@@ -99,7 +100,7 @@
 		await scrollToBottom();
 
 		try {
-			const response = await fetch('/api/chat/message', {
+			const response = await fetch(ENDPOINTS.chatMessage(), {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -109,7 +110,7 @@
 			});
 
 			if (!response.ok) {
-				let serverMessage = `Server unavailable (status ${response.status}). Please ensure the backend is running (http://localhost:3000).`;
+				let serverMessage = `Server unavailable (status ${response.status}). Please ensure the backend is running.`;
 				try {
 					const errorData: ErrorResponse = await response.json();
 					if (errorData?.message) serverMessage = errorData.message;
@@ -123,7 +124,7 @@
 			try {
 				data = await response.json();
 			} catch (parseErr) {
-				throw new Error('Server response was not valid JSON. Please restart the backend (http://localhost:3000).');
+				throw new Error('Server response was not valid JSON. Please restart the backend.');
 			}
 
 			// Save session ID on first message
@@ -136,7 +137,7 @@
 			await loadHistory();
 		} catch (err) {
 			const details = err instanceof Error ? err.message : String(err);
-			const friendly = 'Could not reach the assistant. Please ensure the backend is running (http://localhost:3000) and try again.';
+			const friendly = 'Could not reach the assistant. Please ensure the backend is running and try again.';
 			error = `${friendly} Details: ${details}`;
 
 			// Surface failure inline so the user knows the message was not delivered

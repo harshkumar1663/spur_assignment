@@ -8,7 +8,7 @@ export default defineConfig({
 		proxy: {
 			// Proxy API requests to backend during development
 			'/api': {
-				target: 'http://localhost:3000',
+				target: process.env.VITE_API_URL || 'http://localhost:3000',
 				changeOrigin: true,
 				rewrite: (path) => path.replace(/^\/api/, '')
 			}

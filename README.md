@@ -39,6 +39,29 @@ npm run dev             # http://localhost:5173
 
 Expected URLs: backend at http://localhost:3000, frontend at http://localhost:5173 (API calls proxy to /api → backend).
 
+# 🚀 Deployment
+
+This project is ready for production deployment on various platforms.
+
+**Quick Start**: See [QUICKSTART.md](./QUICKSTART.md) for fastest deployment options
+
+**Full Guide**: See [DEPLOYMENT.md](./DEPLOYMENT.md) for comprehensive deployment instructions
+
+**Supported Platforms**:
+- Railway (Recommended - easiest)
+- Render (Blueprint included)
+- Vercel
+- Docker/VPS
+- Heroku
+
+**Required Environment Variables**:
+```bash
+GEMINI_API_KEY=your-key-here  # Required
+NODE_ENV=production
+PORT=3000
+CORS_ORIGIN=*
+```
+
 # Database Setup
 
 SQLite with WAL, managed via better-sqlite3. Schema is created on backend startup; no external migration tool is required. In production/dev the file lives at backend/data/chat.db (directory auto-created). Tests run against an in-memory database. No seed data is needed; conversations/messages are created on first use.
