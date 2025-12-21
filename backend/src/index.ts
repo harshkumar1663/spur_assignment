@@ -83,44 +83,9 @@ try {
 registerErrorHandler(fastify);
 
 /**
- * Register chat routes
- * All chat functionality exposed via HTTP
- */
-void registerChatRoutes(fastify);
-
-/**
- * Serve static frontend files (production only)
- * In development, frontend runs separately with Vite
- */
-if (NODE_ENV === 'production') {
-  // In CommonJS, __dirname is available
-  const frontendBuildPath = path.resolve(__dirname, '../../frontend/build');
-  
-  // Serve static files
-  void fastify.register(fastifyStatic, {
-    root: frontendBuildPath,
-    prefix: '/',
-    constraints: {},
-  });
-
-  // SPA fallback - serve index.html for all non-API routes
-  fastify.setNotFoundHandler((request, reply) => {
-    // Don't serve index.html for API routes
-    if (request.url.startsWith('/chat') || request.url.startsWith('/health')) {
-      reply.code(404).send({ error: 'Not Found', message: 'Route not found' });
-      return;
-    }
-    
-    // Serve index.html for all other routes (SPA routing)
-    reply.sendFile('index.html');
-  });
-
-  fastify.log.info(`Serving frontend from: ${frontendBuildPath}`);
-}
-
-/**
  * Health check endpoint
  * Essential for container orchestration (Kubernetes, Docker health checks)
+ * MUST be registered before static file serving
  */
 fastify.get('/health', async () => {
   return {
@@ -132,15 +97,42 @@ fastify.get('/health', async () => {
 });
 
 /**
- * Root endpoint
+ * Register chat routes
+ * All chat functionality exposed via HTTP
+ * MUST be registered before static file serving
  */
-fastify.get('/', async () => {
-  return {
-    message: 'Spur Assignment API',
-    version: '1.0.0',
-    docs: '/health',
-  };
-});
+void registerChatRoutes(fastify);
+
+/**
+ * Serve static frontend files (production only)
+ * In development, frontend runs separately with Vite
+ * This MUST be registered AFTER all API routes
+ */
+if (NODE_ENV === 'production') {
+  // In CommonJS, __dirname is available
+  const frontendBuildPath = path.resolve(__dirname, '../../frontend/build');
+  
+  fastify.log.info(`Serving frontend from: ${frontendBuildPath}`);
+  
+  // Serve static files
+  void fastify.register(fastifyStatic, {
+    root: frontendBuildPath,
+    prefix: '/',
+    decorateReply: false,
+  });
+
+  // SPA fallback - serve index.html for all non-API routes
+  fastify.setNotFoundHandler((request, reply) => {
+    // Don't serve index.html for API routes - return 404
+    if (request.url.startsWith('/chat') || request.url.startsWith('/health')) {
+      reply.code(404).send({ error: 'Not Found', message: 'Route not found' });
+      return;
+    }
+    
+    // Serve index.html for all other routes (SPA routing)
+    reply.sendFile('index.html');
+  });
+}
 
 /**
  * Start the server

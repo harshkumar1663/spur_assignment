@@ -39,6 +39,18 @@ npm run dev             # http://localhost:5173
 
 Expected URLs: backend at http://localhost:3000, frontend at http://localhost:5173 (API calls proxy to /api → backend).
 
+# Live Demo (Vercel)
+
+Deployed on Vercel as a single URL (frontend + serverless API). Add your live URL here once deployed.
+
+# Deployment on Vercel (Serverless)
+
+- Backend runs as Vercel Serverless Functions at /api/chat/message and /api/chat/history (same origin as the UI).
+- Frontend is built statically (SvelteKit) and served by Vercel CDN.
+- Environment variables: `GEMINI_API_KEY` (or `OPENAI_API_KEY` fallback), optional `NODE_ENV=production`.
+- Database: SQLite stored in `/tmp` on Vercel (ephemeral per instance). Suitable for demos; use Postgres (`DATABASE_URL`) for durable production data.
+- No separate PUBLIC_API_URL needed; the UI calls same-origin `/api/*`.
+
 # 🚀 Deployment
 
 This project is ready for production deployment on various platforms.
@@ -64,7 +76,7 @@ CORS_ORIGIN=*
 
 # Database Setup
 
-SQLite with WAL, managed via better-sqlite3. Schema is created on backend startup; no external migration tool is required. In production/dev the file lives at backend/data/chat.db (directory auto-created). Tests run against an in-memory database. No seed data is needed; conversations/messages are created on first use.
+SQLite with WAL, managed via better-sqlite3. Schema is created on backend startup; no external migration tool is required. Locally the file lives at backend/data/chat.db (directory auto-created). Tests run against an in-memory database. On Vercel serverless the DB is stored in `/tmp` (ephemeral), so data may reset on cold starts; use Postgres for durability if needed. No seed data is needed; conversations/messages are created on first use.
 
 # Architecture Overview
 

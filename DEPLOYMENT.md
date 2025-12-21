@@ -22,8 +22,11 @@ LOG_LEVEL=info
 ```
 
 ### Frontend Required Variables
+None required for Vercel (UI calls same-origin `/api/*`).
+
+Optional (for other hosts):
 ```
-PUBLIC_API_URL=your-backend-url-here  # e.g., https://your-backend.railway.app
+PUBLIC_API_URL=your-backend-url-here
 ```
 
 ---
@@ -101,49 +104,37 @@ Render offers free hosting with automatic SSL.
 
 ---
 
-## Option 3: Deploy to Vercel
+## Option 3: Deploy to Vercel (Single URL)
 
-Vercel is excellent for frontend but has limitations for backend (serverless functions).
+Vercel hosts both the static SvelteKit frontend and the serverless API routes under `/api/*`.
 
-### Backend Deployment:
-
-⚠️ **Limitation:** Vercel uses serverless functions which may not work well with SQLite persistence. Consider Railway or Render for the backend.
-
-If you still want to use Vercel:
+### Steps (Repository Root)
 
 1. **Install Vercel CLI**
    ```bash
    npm i -g vercel
    ```
 
-2. **Deploy Backend**
+2. **Deploy**
    ```bash
-   cd backend
    vercel --prod
    ```
 
-3. **Add Environment Variables**
-   - In Vercel dashboard, go to Settings > Environment Variables
-   - Add:
-     ```
-     GEMINI_API_KEY=your-key-here
-     NODE_ENV=production
-     CORS_ORIGIN=*
-     ```
-
-### Frontend Deployment:
-
-1. **Deploy Frontend**
-   ```bash
-   cd frontend
-   vercel --prod
+3. **Environment Variables (Project Settings)**
+   ```
+   GEMINI_API_KEY=your-key-here   # or OPENAI_API_KEY
    ```
 
-2. **Configure API URL**
-   - Add environment variable in Vercel:
-     ```
-     PUBLIC_API_URL=your-backend-url
-     ```
+4. **Database on Vercel**
+   - Uses SQLite stored in `/tmp` (ephemeral). Data may reset on cold starts/redeploys.
+   - For durability, provide `DATABASE_URL` (Postgres) and adapt the DB layer.
+
+### Local Preview
+
+Use Vercel dev to run both frontend and API together:
+```bash
+vercel dev
+```
 
 ---
 

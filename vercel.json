@@ -1,24 +1,25 @@
 {
   "version": 2,
+  "functions": {
+    "api/**/*.{js,ts}": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "builds": [
     {
-      "src": "backend/package.json",
+      "src": "api/**/*.{js,ts}",
       "use": "@vercel/node"
+    },
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
     }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "backend/dist/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/build/$1"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production",
-    "HOST": "0.0.0.0",
-    "PORT": "3000"
-  }
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "frontend/build/$1" }
+  ]
 }

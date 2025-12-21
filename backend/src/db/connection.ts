@@ -72,6 +72,11 @@ function getDatabasePath(): string {
     // Use in-memory database for tests (faster, isolated)
     return ':memory:';
   }
+
+  // Vercel serverless functions: writable storage only in /tmp (ephemeral)
+  if (process.env.VERCEL === '1') {
+    return join('/tmp', 'chat.db');
+  }
   
   // Production: store in data directory
   const dataDir = join(process.cwd(), 'data');
