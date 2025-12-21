@@ -3,20 +3,27 @@
  * 
  * Handles API URL configuration for different environments:
  * - Development: Uses proxy (/api) to avoid CORS
- * - Production: Uses PUBLIC_API_URL environment variable
+ * - Production: Uses relative URLs (same origin) since backend serves frontend
  */
 
-// Get the API URL from environment or use default
-export const API_URL = import.meta.env.PUBLIC_API_URL || '';
+// In production, frontend is served by backend, so use relative URLs
+// In development, use the proxy or PUBLIC_API_URL if set
+const isProd = import.meta.env.PROD;
+export const API_URL = isProd ? '' : (import.meta.env.PUBLIC_API_URL || '');
 
 // Helper to construct API endpoints
 export function getApiUrl(path: string): string {
-  // In development with proxy, use relative URL
+  // In production (same origin), use relative URL without /api prefix
+  if (isProd) {
+    return path;
+  }
+  
+  // In development with proxy, use /api prefix
   if (!API_URL || API_URL === '') {
     return `/api${path}`;
   }
   
-  // In production, use full URL
+  // In development with explicit API URL
   return `${API_URL}${path}`;
 }
 

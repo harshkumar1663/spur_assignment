@@ -1,16 +1,16 @@
 services:
   - type: web
-    name: spur-assignment-backend
+    name: spur-assignment
     env: node
     region: oregon
     plan: free
-    buildCommand: npm install && npm run build:backend
-    startCommand: cd backend && npm start
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 3000
+        value: 10000
       - key: HOST
         value: 0.0.0.0
       - key: GEMINI_API_KEY
@@ -18,16 +18,4 @@ services:
       - key: CORS_ORIGIN
         value: "*"
     healthCheckPath: /health
-    autoDeploy: true
-
-  - type: web
-    name: spur-assignment-frontend
-    env: static
-    region: oregon
-    plan: free
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: ./frontend/build
-    envVars:
-      - key: PUBLIC_API_URL
-        value: https://spur-assignment-backend.onrender.com
     autoDeploy: true

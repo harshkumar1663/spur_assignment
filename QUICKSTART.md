@@ -2,6 +2,13 @@
 
 This is a condensed guide to get your project deployed quickly. For detailed instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
+## 📝 Architecture Note
+
+**Single Process Deployment**: This project runs both frontend and backend from a single process. The backend (Fastify) serves both the API routes AND the frontend static files. This makes deployment to platforms with single-process limitations (Railway, Render, Heroku) much easier!
+
+- **Development**: Frontend (Vite) and backend run separately for hot reload
+- **Production**: Backend serves everything (API + static frontend files)
+
 ## Prerequisites
 
 - Node.js 18+
@@ -19,12 +26,11 @@ This is a condensed guide to get your project deployed quickly. For detailed ins
    ```
    GEMINI_API_KEY=your-key-here
    NODE_ENV=production
-   PORT=3000
-   CORS_ORIGIN=*
    ```
 5. Done! Railway auto-builds and deploys
 
-**Your app URL**: `https://your-app.railway.app`
+**Your app URL**: `https://your-app.railway.app`  
+**Both frontend UI and API available at the same URL!**
 
 ### Option 2: Render (Blueprint - 7 minutes)
 
