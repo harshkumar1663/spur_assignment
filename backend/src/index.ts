@@ -22,7 +22,9 @@
 
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import fastifyStatic from '@fastify/static';
 import dotenv from 'dotenv';
+import path from 'path';
 import { registerChatRoutes } from './routes/chat';
 import { registerErrorHandler } from './middleware/errorHandler';
 import { initializeDatabase, closeDatabase } from './db';
@@ -85,6 +87,36 @@ registerErrorHandler(fastify);
  * All chat functionality exposed via HTTP
  */
 void registerChatRoutes(fastify);
+
+/**
+ * Serve static frontend files (production only)
+ * In development, frontend runs separately with Vite
+ */
+if (NODE_ENV === 'production') {
+  // In CommonJS, __dirname is available
+  const frontendBuildPath = path.resolve(__dirname, '../../frontend/build');
+  
+  // Serve static files
+  void fastify.register(fastifyStatic, {
+    root: frontendBuildPath,
+    prefix: '/',
+    constraints: {},
+  });
+
+  // SPA fallback - serve index.html for all non-API routes
+  fastify.setNotFoundHandler((request, reply) => {
+    // Don't serve index.html for API routes
+    if (request.url.startsWith('/chat') || request.url.startsWith('/health')) {
+      reply.code(404).send({ error: 'Not Found', message: 'Route not found' });
+      return;
+    }
+    
+    // Serve index.html for all other routes (SPA routing)
+    reply.sendFile('index.html');
+  });
+
+  fastify.log.info(`Serving frontend from: ${frontendBuildPath}`);
+}
 
 /**
  * Health check endpoint
