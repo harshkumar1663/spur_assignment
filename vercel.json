@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "outputDirectory": "frontend/build",
   "builds": [
     { "src": "api/**/*.{js,ts}", "use": "@vercel/node" },
     {
