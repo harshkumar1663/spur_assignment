@@ -2,5 +2,10 @@
   "version": 2,
   "buildCommand": "sh -c 'cd .. && npm --prefix frontend run build && pwd && ls -la frontend/build'",
   "outputDirectory": "../frontend/build",
-  "installCommand": "npm install"
+  "installCommand": "npm install",
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "nodejs20.x"
+    }
+  }
 }
