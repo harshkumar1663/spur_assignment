@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "buildCommand": "npm run build -w frontend",
-  "outputDirectory": "frontend/build",
   "installCommand": "npm install",
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "nodejs20.x"
-    }
-  }
+  "buildCommand": "npm run build -w frontend",
+  "builds": [
+    { "src": "api/**/*.ts", "use": "@vercel/node@3" },
+    { "src": "frontend/build/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/frontend/build/$1" }
+  ]
 }
