@@ -154,6 +154,22 @@ If you see native build failures for `better-sqlite3` mentioning C++20, V8 API, 
 
 Why: Vercel may default to Node 24, which triggers a source build of `better-sqlite3` against newer V8 headers requiring C++20. Pinning to Node 20 uses available prebuilt binaries and avoids compilation.
 
+### Monorepo Settings (IMPORTANT)
+
+If you previously set the project Root Directory to `frontend`, Vercel will look for the build output inside `frontend/build` and ignore the root-level serverless `api/` directory. To deploy frontend and API together from this monorepo:
+
+1. Project Root Directory: set to repository root `/` (not `frontend`).
+2. Output Directory: `build`.
+3. Build Command: `npm run build -w frontend`.
+4. Functions: auto-detected from `/api/**/*.ts` (configured in `vercel.json`).
+
+Symptoms when Root Directory is `frontend`:
+- Build logs show `Wrote site to "../build"` but Vercel errors with "No Output Directory named \"build\"" because it searches in `frontend/build`.
+- Serverless routes under `/api` are not deployed.
+
+Alternative (if you must keep Root Directory = `frontend`):
+- Move `api/` into `frontend/api/` and change the SvelteKit adapter output back to `build` (no `../`). This deploys, but splits code and is less clean for this repo.
+
 ---
 
 ## Option 4: Deploy with Docker
