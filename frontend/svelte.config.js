@@ -9,10 +9,10 @@ const config = {
 
 	kit: {
 		// adapter-static builds to static files that can be served by any web server
-		// On Vercel, emit to the repo root `/build` so Vercel picks it up
+		// Emit to frontend/build so Vercel can use outputDirectory "frontend/build"
 		adapter: adapter({
-			pages: process.env.VERCEL ? '../build' : 'build',
-			assets: process.env.VERCEL ? '../build' : 'build',
+			pages: 'build',
+			assets: 'build',
 			fallback: 'index.html',
 			precompress: false,
 			strict: false
