@@ -6,9 +6,11 @@
  * - Production: Uses relative URLs (same origin) since backend serves frontend
  */
 
-// Always call through the same-origin API route. During development, Vite proxy
-// rewrites /api → backend; on Vercel the serverless route lives at /api/*.
-export const API_URL = '/api';
+// Prefer external backend URL if provided; fallback to same-origin /api
+// - At dev time, Vite proxy rewrites /api → backend
+// - In prod (separate deployments), set PUBLIC_API_URL to your backend base URL
+import { PUBLIC_API_URL } from '$env/static/public';
+export const API_URL = PUBLIC_API_URL?.replace(/\/$/, '') || '/api';
 
 // Helper to construct API endpoints
 export function getApiUrl(path: string): string {

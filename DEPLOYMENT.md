@@ -170,6 +170,30 @@ Symptoms when Root Directory is `frontend`:
 Alternative (if you must keep Root Directory = `frontend`):
 - Move `api/` into `frontend/api/` and change the SvelteKit adapter output back to `build` (no `../`). This deploys, but splits code and is less clean for this repo.
 
+### Two Vercel Projects (Separate Frontend + Backend)
+
+If you prefer to deploy backend and frontend separately:
+
+1) Backend Project
+- Root Directory: `backend/`
+- Detects Functions in `backend/api/**` (already added)
+- `backend/vercel.json` pins Node 20 for functions
+- Env Vars: `GEMINI_API_KEY` (or `OPENAI_API_KEY`), optional `CORS_ORIGIN` (defaults to `*`)
+- After deploy, note the URL: e.g., `https://your-backend.vercel.app`
+
+2) Frontend Project
+- Root Directory: `frontend/`
+- Build Command: `npm run build`
+- Output Directory: `build`
+- Env Vars: `PUBLIC_API_URL=https://your-backend.vercel.app/api`
+- The frontend will call the backend via this base URL
+
+3) Test
+```bash
+curl https://your-backend.vercel.app/api/health
+curl -X POST https://your-backend.vercel.app/api/chat/message -H "content-type: application/json" -d '{"message":"Hello"}'
+```
+
 ---
 
 ## Option 4: Deploy with Docker
